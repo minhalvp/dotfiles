@@ -121,10 +121,10 @@ super + {Left,Down,Up,Right}
 	bspc node -v {-20 0,0 20,0 -20,20 0}
 # media keys
 alt + p
-	playerctl play-pause
+	playerctl --player=spotify play-pause
 # Next
 alt + o
-	playerctl next
+	playerctl --player=spotify next
 # Previous
 alt + i
-	playerctl previous
+	playerctl --player=spotify previous
