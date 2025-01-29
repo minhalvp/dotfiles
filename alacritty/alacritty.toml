@@ -1,0 +1,21 @@
+[env]
+TERM = "xterm-256color"
+[window]
+padding.x = 10
+padding.y = 10
+
+decorations = "Buttonless"
+
+option_as_alt = "Both"
+opacity = 1.0
+blur = true
+
+[font]
+normal.family = "JetBrainsMono Nerd Font"
+size = 16
+
+[keyboard]
+bindings = [
+  { key = "Left",  mods = "Alt", chars = "\u001bb" },
+  { key = "Right", mods = "Alt", chars = "\u001bf" },
+]
