@@ -1,27 +1,5 @@
 #!/usr/bin/env bash
 
-# Copy configuration files to home directory
-cp .zshrc ~/.zshrc
-cp .tmux.conf ~/.tmux.conf
-cp .zshenv ~/.zshenv
-
-echo "Configuration files have been copied to home directory"
-
-# Create Alacritty config directory and copy config
-mkdir -p ~/.config/alacritty
-cp alacritty.toml ~/.config/alacritty/alacritty.toml
-
-echo "Alacritty configuration has been copied"
-
-# Install Homebrew if not already installed
-if ! command -v brew &> /dev/null; then
-    echo "Installing Homebrew..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    echo "Homebrew installation completed"
-else
-    echo "Homebrew is already installed"
-fi
-
 packages=(
     git
     tmux
@@ -41,7 +19,6 @@ packages=(
     powerlevel10k
 )
 
-# Define casks to install
 casks=(
     1password
     arc
@@ -53,7 +30,6 @@ casks=(
     discord
     telegram
     visual-studio-code
-    neardrop
     tailscale
     hiddenbar
     font-jetbrains-mono-nerd-font
@@ -61,7 +37,29 @@ casks=(
     raycast
     discord
     spotify
+    obs
 )
+
+
+
+cp .zshrc ~/.zshrc
+cp .tmux.conf ~/.tmux.conf
+cp .zshenv ~/.zshenv
+
+echo "Configuration files have been copied to home directory"
+
+mkdir -p ~/.config/alacritty
+cp alacritty.toml ~/.config/alacritty/alacritty.toml
+
+echo "Alacritty configuration has been copied"
+
+if ! command -v brew &> /dev/null; then
+    echo "Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    echo "Homebrew installation completed"
+else
+    echo "Homebrew is already installed"
+fi
 
 # Install packages
 echo "Installing packages..."
@@ -98,3 +96,17 @@ echo "macOS configuration completed"
 echo "Installing LunarVim..."
 LV_BRANCH='release-1.4/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.4/neovim-0.9/utils/installer/install.sh)
 echo "LunarVim installation completed"
+
+# Check if TPM is already installed
+if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+  echo "TPM not found. Installing..."
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  if [ $? -eq 0 ]; then
+    echo "TPM installed successfully!"
+  else
+    echo "Error installing TPM."
+    exit 1
+  fi
+else
+  echo "TPM is already installed."
+fi

@@ -81,6 +81,22 @@ defaults write NSGlobalDomain KeyRepeat -int 1
 # Disable auto-correct
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
+# Disable spotlight shortcuts
+defaults write com.apple.symbolichotkeys.plist AppleSymbolicHotKeys -dict-add 64 "
+  <dict>
+    <key>enabled</key><false/>
+    <key>value</key><dict>
+      <key>type</key><string>standard</string>
+      <key>parameters</key>
+      <array>
+        <integer>32</integer>
+        <integer>49</integer>
+        <integer>1048576</integer>
+      </array>
+    </dict>
+  </dict>
+"
+
 ###############################################################################
 # Finder                                                                      #
 ###############################################################################
@@ -126,6 +142,9 @@ defaults write NSGlobalDomain com.apple.springing.delay -float 0.1
 # Avoid creating .DS_Store files on network volumes
 defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
 
+# Remove Desktop Icons
+defaults write com.apple.finder CreateDesktop -bool false
+
 # Show the ~/Library folder
 chflags nohidden ~/Library
 
@@ -133,6 +152,13 @@ chflags nohidden ~/Library
 # Dock, Dashboard, and hot corners                                            #
 ###############################################################################
 
+# The only Apps to add to the Dock
+dockapps=(
+    "/Applications/Arc.app"
+    "/Applications/Alacritty.app"
+    "/Applications/Visual Studio Code.app"
+    "/System/Applications/System Settings.app"
+)
 # Set the icon size of Dock items
 defaults write com.apple.dock tilesize -int 30
 
@@ -147,6 +173,20 @@ defaults write com.apple.universalaccess reduceTransparency -bool true
 
 # Enable Reduce Motion
 defaults write com.apple.universalaccess reduceMotion -bool true 
+
+# Remove everything from the Dock
+defaults delete com.apple.dock persistent-apps
+defaults delete com.apple.dock persistent-others
+
+# Add each application in the dockapps array to the Dock
+for app in "${dockapps[@]}"; do
+    if [ -e "$app" ]; then
+        defaults write com.apple.dock persistent-apps -array-add "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>$app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>"
+        echo "Added $app to the Dock."
+    else
+        echo "Application not found: $app"
+    fi
+done
 
 # Hot corners
 # Possible values:
@@ -197,6 +237,7 @@ if [[ ! ($* == *--no-restart*) ]]; then
   for app in "cfprefsd" "Dock" "Finder" "Mail" "SystemUIServer" "Terminal"; do
     killall "${app}" > /dev/null 2>&1
   done
+  /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
 fi
 
 printf "Please log out and log back in to make all settings take effect.\n"
