@@ -25,7 +25,6 @@ casks=(
     alacritty
     alt-tab
     android-platform-tools
-    android-studio
     docker
     discord
     telegram
@@ -37,76 +36,131 @@ casks=(
     raycast
     discord
     spotify
+    notion
+    whatsapp
     obs
 )
 
+usage() {
+    echo "Usage: $0 [-ahlpcsm]"
+    echo "Options:"
+    echo "  -a  Install all (default if no options specified)"
+    echo "  -h  Show this help message"
+    echo "  -l  Create symbolic links only"
+    echo "  -p  Install packages only"
+    echo "  -c  Install casks only"
+    echo "  -s  Configure macOS settings only"
+    echo "  -m  Install package managers only (Homebrew, TPM)"
+}
 
+create_symlinks() {
+    echo "Creating symbolic links..."
+    ln -sf "$(pwd)/.zshrc" ~/.zshrc
+    ln -sf "$(pwd)/.tmux.conf" ~/.tmux.conf
+    ln -sf "$(pwd)/.zshenv" ~/.zshenv
+    
+    mkdir -p ~/.config/alacritty
+    ln -sf "$(pwd)/alacritty.toml" ~/.config/alacritty/alacritty.toml
+    echo "Symbolic links created"
+}
 
-cp .zshrc ~/.zshrc
-cp .tmux.conf ~/.tmux.conf
-cp .zshenv ~/.zshenv
+install_packages() {
+    echo "Installing packages..."
+    # Get list of installed packages once
+    local installed_packages=$(brew list --formula)
+    
+    for package in "${packages[@]}"; do
+        if echo "$installed_packages" | grep -q "^${package}$"; then
+            echo "${package} is already installed"
+        else
+            echo "Installing ${package}..."
+            brew install "$package"
+        fi
+    done
+    brew install --no-quarantine grishka/grishka/neardrop
+    echo "Package installation completed"
+}
 
-echo "Configuration files have been copied to home directory"
+install_casks() {
+    echo "Installing casks..."
+    # Get list of installed casks once
+    local installed_casks=$(brew list --cask)
+    
+    for cask in "${casks[@]}"; do
+        if echo "$installed_casks" | grep -q "^${cask}$"; then
+            echo "${cask} is already installed"
+        else
+            echo "Installing ${cask}..."
+            brew install --cask "$cask"
+        fi
+    done
+    echo "Cask installation completed"
+}
 
-mkdir -p ~/.config/alacritty
-cp alacritty.toml ~/.config/alacritty/alacritty.toml
+setup_package_managers() {
+    if ! command -v brew &> /dev/null; then
+        echo "Installing Homebrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    else
+        echo "Homebrew is already installed"
+    fi
 
-echo "Alacritty configuration has been copied"
+    if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+        echo "Installing TPM..."
+        git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    else
+        echo "TPM is already installed"
+    fi
+}
 
-if ! command -v brew &> /dev/null; then
-    echo "Installing Homebrew..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    echo "Homebrew installation completed"
-else
-    echo "Homebrew is already installed"
+configure_macos() {
+    echo "Configuring macOS settings..."
+    bash "$(dirname "$0")/osx.sh"
+    echo "macOS configuration completed"
+}
+
+# Parse command line arguments
+if [ $# -eq 0 ]; then
+    # No arguments, run everything
+    setup_package_managers
+    create_symlinks
+    install_packages
+    install_casks
+    configure_macos
+    exit 0
 fi
 
-# Install packages
-echo "Installing packages..."
-for package in "${packages[@]}"; do
-    if brew list "$package" &>/dev/null; then
-        echo "${package} is already installed"
-    else
-        echo "Installing ${package}..."
-        brew install "$package"
-    fi
+while getopts "ahlpcsm" opt; do
+    case $opt in
+        a)
+            setup_package_managers
+            create_symlinks
+            install_packages
+            install_casks
+            configure_macos
+            ;;
+        h)
+            usage
+            exit 0
+            ;;
+        l)
+            create_symlinks
+            ;;
+        p)
+            install_packages
+            ;;
+        c)
+            install_casks
+            ;;
+        s)
+            configure_macos
+            ;;
+        m)
+            setup_package_managers
+            ;;
+        \?)
+            usage
+            exit 1
+            ;;
+    esac
 done
-
-echo "Package installation completed"
-
-# Install casks
-echo "Installing casks..."
-for cask in "${casks[@]}"; do
-    if brew list --cask "$cask" &>/dev/null; then
-        echo "${cask} is already installed"
-    else
-        echo "Installing ${cask}..."
-        brew install --cask "$cask"
-    fi
-done
-
-echo "Cask installation completed"
-
-# Execute macOS settings script
-echo "Configuring macOS settings..."
-bash "$(dirname "$0")/osx.sh"
-echo "macOS configuration completed"
-
-# Install LunarVim
-echo "Installing LunarVim..."
-LV_BRANCH='release-1.4/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.4/neovim-0.9/utils/installer/install.sh)
-echo "LunarVim installation completed"
-
-# Check if TPM is already installed
-if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
-  echo "TPM not found. Installing..."
-  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-  if [ $? -eq 0 ]; then
-    echo "TPM installed successfully!"
-  else
-    echo "Error installing TPM."
-    exit 1
-  fi
-else
-  echo "TPM is already installed."
-fi

@@ -1,9 +1,3 @@
-# Cargo
-. "$HOME/.cargo/env"
-
-# Deno
-. "$HOME/.deno/env"
-
 # Android SDK
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$PATH:$ANDROID_HOME/emulator

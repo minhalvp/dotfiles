@@ -20,7 +20,8 @@
 # @see: http://secrets.blacktree.com/?showapp=com.apple.finder
 # @see: https://github.com/herrbischoff/awesome-macos-command-line
 #
-# @author Jeff Geerling
+# @author Minhal Valiya Peedikakkal
+# inspired by Jeff Geerling's dotfiles and its usage in geerlingguy/mac-dev-playbook
 
 # Warn that some commands will not be run if the script is not run as root.
 if [[ $EUID -ne 0 ]]; then
@@ -115,6 +116,9 @@ defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
 # Finder: show hidden files by default
 # defaults write com.apple.finder AppleShowAllFiles -bool true
 
+# Finder: Remove empty bin warning
+defaults write com.apple.finder WarnOnEmptyTrash -bool false
+
 # Finder: show all filename extensions
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 
@@ -177,6 +181,7 @@ defaults write com.apple.universalaccess reduceMotion -bool true
 # Remove everything from the Dock
 defaults delete com.apple.dock persistent-apps
 defaults delete com.apple.dock persistent-others
+defaults write com.apple.dock autohide -bool true
 
 # Add each application in the dockapps array to the Dock
 for app in "${dockapps[@]}"; do
