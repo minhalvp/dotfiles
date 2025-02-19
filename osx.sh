@@ -164,7 +164,7 @@ dockapps=(
     "/System/Applications/System Settings.app"
 )
 # Set the icon size of Dock items
-defaults write com.apple.dock tilesize -int 30
+defaults write com.apple.dock tilesize -int 45
 
 # Speed up Mission Control animations
 defaults write com.apple.dock expose-animation-duration -float 0.15

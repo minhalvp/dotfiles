@@ -1,54 +1,11 @@
 #!/usr/bin/env bash
 
-packages=(
-    git
-    tmux
-    gh
-    sqlite
-    node
-    openssl
-    wget
-    eza
-    fzf
-    neovim
-    htop
-    ripgrep
-    python@3.12
-    scrcpy
-    zoxide
-    powerlevel10k
-)
-
-casks=(
-    1password
-    arc
-    alacritty
-    alt-tab
-    android-platform-tools
-    docker
-    discord
-    telegram
-    visual-studio-code
-    tailscale
-    hiddenbar
-    font-jetbrains-mono-nerd-font
-    stats
-    raycast
-    discord
-    spotify
-    notion
-    whatsapp
-    obs
-)
-
 usage() {
-    echo "Usage: $0 [-ahlpcsm]"
+    echo "Usage: $0 [-ahlsm]"
     echo "Options:"
     echo "  -a  Install all (default if no options specified)"
     echo "  -h  Show this help message"
     echo "  -l  Create symbolic links only"
-    echo "  -p  Install packages only"
-    echo "  -c  Install casks only"
     echo "  -s  Configure macOS settings only"
     echo "  -m  Install package managers only (Homebrew, TPM)"
 }
@@ -64,37 +21,10 @@ create_symlinks() {
     echo "Symbolic links created"
 }
 
-install_packages() {
-    echo "Installing packages..."
-    # Get list of installed packages once
-    local installed_packages=$(brew list --formula)
-    
-    for package in "${packages[@]}"; do
-        if echo "$installed_packages" | grep -q "^${package}$"; then
-            echo "${package} is already installed"
-        else
-            echo "Installing ${package}..."
-            brew install "$package"
-        fi
-    done
-    brew install --no-quarantine grishka/grishka/neardrop
-    echo "Package installation completed"
-}
-
-install_casks() {
-    echo "Installing casks..."
-    # Get list of installed casks once
-    local installed_casks=$(brew list --cask)
-    
-    for cask in "${casks[@]}"; do
-        if echo "$installed_casks" | grep -q "^${cask}$"; then
-            echo "${cask} is already installed"
-        else
-            echo "Installing ${cask}..."
-            brew install --cask "$cask"
-        fi
-    done
-    echo "Cask installation completed"
+install_homebrew_packages() {
+    echo "Installing packages and casks from Brewfile..."
+    brew bundle
+    echo "Homebrew installation completed"
 }
 
 setup_package_managers() {
@@ -103,6 +33,13 @@ setup_package_managers() {
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     else
         echo "Homebrew is already installed"
+    fi
+
+    if ! command -v uv &> /dev/null; then
+        echo "Installing UV package manager..."
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+    else
+        echo "UV is already installed"
     fi
 
     if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
@@ -124,19 +61,17 @@ if [ $# -eq 0 ]; then
     # No arguments, run everything
     setup_package_managers
     create_symlinks
-    install_packages
-    install_casks
+    install_homebrew_packages
     configure_macos
     exit 0
 fi
 
-while getopts "ahlpcsm" opt; do
+while getopts "ahlsm" opt; do
     case $opt in
         a)
             setup_package_managers
             create_symlinks
-            install_packages
-            install_casks
+            install_homebrew_packages
             configure_macos
             ;;
         h)
@@ -145,12 +80,6 @@ while getopts "ahlpcsm" opt; do
             ;;
         l)
             create_symlinks
-            ;;
-        p)
-            install_packages
-            ;;
-        c)
-            install_casks
             ;;
         s)
             configure_macos
