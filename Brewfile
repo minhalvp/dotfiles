@@ -14,6 +14,7 @@ brew "python@3.12"
 brew "scrcpy"
 brew "zoxide"
 brew "powerlevel10k"
+brew "rustup"
 
 # Casks
 cask "1password"

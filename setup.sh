@@ -21,18 +21,36 @@ create_symlinks() {
     echo "Symbolic links created"
 }
 
-install_homebrew_packages() {
-    echo "Installing packages and casks from Brewfile..."
-    brew bundle
-    echo "Homebrew installation completed"
-}
-
 setup_package_managers() {
     if ! command -v brew &> /dev/null; then
         echo "Installing Homebrew..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     else
         echo "Homebrew is already installed"
+    fi
+
+    if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+        echo "Installing TPM..."
+        git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    else
+        echo "TPM is already installed"
+    fi
+}
+
+install_homebrew_packages() {
+    echo "Installing packages and casks from Brewfile..."
+    brew bundle
+    echo "Homebrew installation completed"
+    install_dev_tools
+}
+
+install_dev_tools() {
+    if ! command -v rustup &> /dev/null; then
+        echo "Installing Rust via rustup..."
+        rustup-init -y
+        source "$HOME/.cargo/env"
+    else
+        echo "Rust is already installed"
     fi
 
     if ! command -v uv &> /dev/null; then
@@ -42,11 +60,11 @@ setup_package_managers() {
         echo "UV is already installed"
     fi
 
-    if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
-        echo "Installing TPM..."
-        git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    if ! command -v lvim &> /dev/null; then
+        echo "Installing LunarVim..."
+        bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
     else
-        echo "TPM is already installed"
+        echo "LunarVim is already installed"
     fi
 }
 

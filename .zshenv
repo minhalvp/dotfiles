@@ -5,3 +5,4 @@ export PATH=$PATH:$ANDROID_HOME/platform-tools
 
 # Other PATH additions
 export PATH="/Users/minhalvp/.local/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
