@@ -1,3 +1,4 @@
+
 # Packages
 brew "git"
 brew "tmux"
@@ -15,6 +16,7 @@ brew "scrcpy"
 brew "zoxide"
 brew "powerlevel10k"
 brew "rustup"
+brew "yt-dlp"
 
 # Casks
 cask "1password"

@@ -153,6 +153,9 @@ defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
 # Remove Desktop Icons
 defaults write com.apple.finder CreateDesktop -bool false
 
+# Change preferred Finder view to List View
+defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
+
 # Show the ~/Library folder
 chflags nohidden ~/Library
 
@@ -186,6 +189,9 @@ defaults write com.apple.universalaccess reduceMotion -bool true
 defaults delete com.apple.dock persistent-apps
 defaults delete com.apple.dock persistent-others
 defaults write com.apple.dock autohide -bool true
+
+# Autohide Menu bar
+defaults write NSGlobalDomain _HIHideMenuBar -bool true
 
 # Add each application in the dockapps array to the Dock
 for app in "${dockapps[@]}"; do
