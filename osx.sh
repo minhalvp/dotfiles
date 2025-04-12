@@ -165,9 +165,9 @@ chflags nohidden ~/Library
 
 # The only Apps to add to the Dock
 dockapps=(
-    "/Applications/Arc.app"
+    "/Applications/Zen.app"
     "/Applications/Alacritty.app"
-    "/Applications/Visual Studio Code.app"
+    "/Applications/Brave Browser.app"
     "/System/Applications/System Settings.app"
 )
 # Set the icon size of Dock items
@@ -191,7 +191,7 @@ defaults delete com.apple.dock persistent-others
 defaults write com.apple.dock autohide -bool true
 
 # Autohide Menu bar
-defaults write NSGlobalDomain _HIHideMenuBar -bool true
+defaults write NSGlobalDomain _HIHideMenuBar -bool false 
 
 # Add each application in the dockapps array to the Dock
 for app in "${dockapps[@]}"; do
@@ -220,7 +220,7 @@ done
 # Disable all hot corners
 defaults write com.apple.dock wvous-br-corner -int 0
 defaults write com.apple.dock wvous-br-modifier -int 0
-defaults write com.apple.dock wvous-tr-corner -int 2
+defaults write com.apple.dock wvous-tr-corner -int 0
 defaults write com.apple.dock wvous-tr-modifier -int 0
 defaults write com.apple.dock wvous-bl-corner -int 0
 defaults write com.apple.dock wvous-bl-modifier -int 0
