@@ -20,6 +20,7 @@ alias ls="eza --icons=always"
 # Other aliases
 alias tf=terraform
 alias taildrop="tailscale file cp"
+alias lg="lazygit"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
