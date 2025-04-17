@@ -17,6 +17,7 @@ brew "zoxide"
 brew "powerlevel10k"
 brew "rustup"
 brew "yt-dlp"
+brew "fzf"
 
 # Casks
 cask "1password"
