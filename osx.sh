@@ -193,6 +193,9 @@ defaults write com.apple.dock autohide -bool true
 # Autohide Menu bar
 defaults write NSGlobalDomain _HIHideMenuBar -bool false 
 
+# Disable recents 
+defaults write com.apple.dock show-recents -bool false
+
 # Add each application in the dockapps array to the Dock
 for app in "${dockapps[@]}"; do
     if [ -e "$app" ]; then

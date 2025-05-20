@@ -12,13 +12,17 @@ source $(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme
 
 # ---- Zoxide (better cd) ----
 eval "$(zoxide init zsh)"
+
 alias cd="z"
+alias cdi="zi"
 
 # ---- Eza (better ls) -----
 alias ls="eza --icons=always"
+alias ll="ls -la"
 
 # Other aliases
 alias tf=terraform
+alias n=lvim
 alias taildrop="tailscale file cp"
 alias lg="lazygit"
 
@@ -36,3 +40,6 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 source <(fzf --zsh)
+
+# Added by Windsurf
+export PATH="/Users/minhalvp/.codeium/windsurf/bin:$PATH"
